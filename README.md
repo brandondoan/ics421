@@ -14,6 +14,8 @@ In this version, the project is not ready for live systems. As of now, testing c
 
 ### Prerequisites
 
+Cloning this repo to your machine
+
 Docker (Virtualization)
 
 A linux environment with the following packages
@@ -33,6 +35,8 @@ Text Editor of your choice
 ### Installing
 
 Below are the step by step instructions on how to get your development environment started. For the purpose of clarity, included with the instructions are examples of what the command line prompt should look like. 
+
+You can clone this repo by using 'https://github.com/brandondoan/ics421'
 
 Install Docker onto your computer
 
@@ -73,8 +77,34 @@ You can also install a text editor of your choice. Here is an example of how to 
 apt-get -y install vim
 ```
 
+From here you should change from the root account to a user account, you must create a new user account and login to it.
 
-End with an example of getting some data out of the system or using it for a little demo
+```
+adduser <username>
+su <username>
+```
+
+After switching over to the new user account, go to your home directory and then create a directory that you wish to copy your files over to.
+
+```
+cd
+mkdir <directory name>
+cd <directory name>
+```
+
+We can now exit docker to copy over the files in the repository we cloned.
+
+```
+exit
+```
+
+Change directory to the location of your cloned repository. Then type in the following into the command prompt. (Will only work properly if you are in the directory where the files are located)
+
+```
+docker cp <filename> <docker container name>:/home/<username>/<directory name>/<filename>
+```
+
+Repeat this process with every file in the repository.
 
 ## Running the tests
 
