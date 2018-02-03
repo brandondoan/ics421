@@ -14,6 +14,8 @@ In this version, the project is not ready for live systems. As of now, testing c
 
 ### Prerequisites
 
+Docker (Virtualization)
+
 A linux environment with the following packages
 
 * iputils-ping
@@ -27,16 +29,21 @@ Python3 with the following packages
 
 Text Editor of your choice
 
-Docker (Virtualization)
 
 ### Installing
 
-A step by step series of examples that tell you have to get a development env running
+Below are the step by step instructions on how to get your development environment started. For the purpose of clarity, included with the instructions are examples of what the command line prompt should look like. 
 
-Say what the step will be
+Install Docker onto your computer
+
+* Download Docker Community Edition from the following link, [Docker Website](https://www.docker.com) 
+    * Windows users that are having trouble, can instead download Docker Toolbox at this link, [Docker Toolbox](https://docs.docker.com/toolbox/toolbox_install_windows/)
+    * Follow the installation instructions provided at, [Getting Started], (https://docs.docker.com/get-started/)
+    
+After downloading docker we can now setup our containers with the ubuntu image. To do this we have to open up a terminal and type in the following command.
 
 ```
-Give the example
+docker run -it --name=<container name> ubuntu
 ```
 
 And repeat
