@@ -112,7 +112,7 @@ You are now able to test the parDBD.py server program and runDDL.py client progr
 
 Before we can actually run the tests we will have to reconfigure our clusterconfig.ini. and parDBD.py. This is a sample of the contents within the config file.
 
-```python
+```ini
 [catalog]
 driver: com.ibm.db2.jcc.DB2Driver
 hostname: 172.17.0.2:50001/mycatdb
@@ -147,7 +147,14 @@ import sqlite3
 connection = sqlite3.connect("mydb1.db") #object for connection to sqlite3 database for this server
 cursor = connection.cursor() #cursor to execute DDL commands to database
 ```
+## Running tests
 
+We are now finally ready to test our DDL processor and DBMS servers. The file, ddlfile.sql, contains a generic DDL statement that we can use for our test.
+
+```sql
+CREATE TABLE BOOKS(isbn char(14), title char(80), price
+decimal);
+```
 
 ## Authors
 
