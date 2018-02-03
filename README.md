@@ -104,37 +104,14 @@ Change directory to the location of your cloned repository. Then type in the fol
 docker cp <filename> <docker container name>:/home/<username>/<directory name>/<filename>
 ```
 
-Repeat this process with every file in the repository.
+Repeat this process with every file in the repository. 
+
+You are now able to test the parDBD.py server program and runDDL.py client program on a single machine. In order to run the tests across multiple machines, create additional containers that contain the parDBD.py file. 
 
 ## Running the tests
 
 Explain how to run the automated tests for this system
 
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
 
 ## Authors
 
