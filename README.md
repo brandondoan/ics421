@@ -112,6 +112,7 @@ You are now able to test the parDBD.py server program and runDDL.py client progr
 
 Before we can actually run the tests we will have to reconfigure our clusterconfig.ini. and parDBD.py. This is a sample of the contents within the config file.
 
+### Sample contents of clusterconfig.ini file
 ```ini
 [catalog]
 driver: com.ibm.db2.jcc.DB2Driver
@@ -139,6 +140,7 @@ Mark down the ip address, which container it belongs to, and the node number, as
 
 Next on each container you must update the parDBD.py file on line 5, to the correct database name based on the node number, i.e. 'mydb1.db'  for node 1 and 'mydb2.db' for node 2, etc...
 
+### First 6 lines of code in parDBD.py
 ```python
 import socket
 import sys
@@ -151,10 +153,61 @@ cursor = connection.cursor() #cursor to execute DDL commands to database
 
 We are now finally ready to test our DDL processor and DBMS servers. The file, ddlfile.sql, contains a generic DDL statement that we can use for our test.
 
+### Sample content of ddlfile.sql file
 ```sql
 CREATE TABLE BOOKS(isbn char(14), title char(80), price
 decimal);
 ```
+
+On each container we have to run the parDBD.py program in the background to listen for queries. The program takes two command line arguments: Ip address or hostname, and the port number(by default I have the port numbers set to 50001, if you want to change this you will also need to update the port number in the runDDL.py file). An example of the command is shown below.
+
+```
+python3 parDBD.py <IP or hostname> <port number> &
+```
+After all the containers have parDBD.py running we can then execute our runDDL.py program on our container that is acting as the client. The runDDL.py program takes two command line arguments: the clusterconfig file, and the ddlfile file. An example on how to run the program is shown below
+
+```
+python3 runDDL.py clusterconfig.ini ddlfile.sql
+```
+During the execution of the runDDL.py file, the client will check to see if the catalog database exists locally, if it does not it will create a local database that contains a SQL table, that catalogs where tables are stored in the DBMS as well as at which node. Then it sends its DDL query to the server machines in parallel and waits for a response.
+
+After execution each server that is sent the query will print out a confirmation message with the query included. It will then process the query and update its local database. In the event that the query succeeds, it will return to the server a confirmation that the query succeeded, on the other hand if the query failed, it will return a failure notice.
+
+Upon receiving the success/fail notice the client will update the catalog if needed, and afterwards will print out a success/fail report for every query sent to each server. It will also print a statement of whether the catalog database was updated as well. 
+
+### Sample outputs of runDDL.py execution
+
+```
+172.17.0.3:50001/mydb1 ddlfile.sql Success
+172.17.0.4:50001/mydb2 ddlfile.sql Success
+172.17.0.2:50001/mycatdb.db ddlfile.sql catalog updated.
+```
+```
+172.17.0.3:50001/mydb1 ddlfile.sql Failure
+172.17.0.4:50001/mydb2 ddlfile.sql Failure
+172.17.0.2:50001/mycatdb.db ddlfile.sql catalog had no updates.
+```
+
+### Sample outputs of parDBD.py query processing
+
+```
+Server: Connection from ('172.17.0.2', 41628)
+Server: recv CREATE TABLE BOOKS(isbn char(14), title char(80), price decimal);
+
+Server: send Success
+```
+
+```
+Server: Connection from ('172.17.0.2', 41598)
+Server: recv CREATE TABLE BOOKS(isbn char(14), title char(80), price decimal);
+
+Server: send Failure
+```
+
+## Version
+
+As this is the first version, as of now the program is extremely limited, as new versions come out the program should become more streamlined and polished.
+
 
 ## Authors
 
@@ -162,6 +215,4 @@ decimal);
 
 ## Acknowledgments
 
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
+* NOS Energy Drinks (The real MVP)
