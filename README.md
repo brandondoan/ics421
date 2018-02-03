@@ -108,14 +108,50 @@ Repeat this process with every file in the repository.
 
 You are now able to test the parDBD.py server program and runDDL.py client program on a single machine. In order to run the tests across multiple machines, create additional containers that contain the parDBD.py file. 
 
-## Running the tests
+## Editing the files
 
-Explain how to run the automated tests for this system
+Before we can actually run the tests we will have to reconfigure our clusterconfig.ini. and parDBD.py. This is a sample of the contents within the config file.
+
+```python
+[catalog]
+driver: com.ibm.db2.jcc.DB2Driver
+hostname: 172.17.0.2:50001/mycatdb
+ip: 172.17.0.2
+
+[nodecount]
+numnodes: 2
+
+[node 1]
+driver: com.ibm.db2.jcc.DB2Driver
+hostname: 172.17.0.3:50001/mydb1
+ip: 172.17.0.3
+
+[node 2]
+driver: com.ibm.db2.jcc.DB2Driver
+hostname: 172.17.0.4:50001/mydb2
+ip: 172.17.0.4
+```
+We will need to adjust the values according to the ip addresses of your own containers. We will also need to add or remove nodes depending on how many servers we are running. To find the ip address of your container you can type into the command prompt. 
+
+```ip a```
+
+Mark down the ip address, which container it belongs to, and the node number, as they will be used to update your clustercfg.ini and parDBD.py file. After finding the ip address for each container edit your config file accordingly, adding or removing nodes depending on the amount of servers you intend to run. Making sure that your catalog section contains the ip address that you will be running runDDL.py (your client program) from. In your nodecount section, update the value of numnodes to match the amount of nodes you are using. 
+
+Next on each container you must update the parDBD.py file on line 5, to the correct database name based on the node number, i.e. 'mydb1.db'  for node 1 and 'mydb2.db' for node 2, etc...
+
+```python
+import socket
+import sys
+import sqlite3
+
+connection = sqlite3.connect("mydb1.db") #object for connection to sqlite3 database for this server
+cursor = connection.cursor() #cursor to execute DDL commands to database
+```
 
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Brandon Doan**
 
 ## Acknowledgments
 
