@@ -46,11 +46,33 @@ After downloading docker we can now setup our containers with the ubuntu image. 
 docker run -it --name=<container name> ubuntu
 ```
 
-And repeat
+We now have a docker container with the linux environment setup! Unfortunately the base ubuntu image is missing a few packages that we will require for our program. To install the packages type in the following commands.
 
 ```
-until finished
+apt-get -y update
+apt-get -y install iputils-ping
+apt-get -y install iproute
+apt-get -y install dnsutils
 ```
+
+After installation of the packages are complete, the next step is to setup python and its package installer. Use the following commands to install.
+
+```
+apt-get -y install python3
+apt-get -y install python3-pip
+```
+The next package to install is sqlite3, the the command for install is.
+
+```
+apt-get -y install sqlite3
+```
+
+You can also install a text editor of your choice. Here is an example of how to install vim.
+
+```
+apt-get -y install vim
+```
+
 
 End with an example of getting some data out of the system or using it for a little demo
 
