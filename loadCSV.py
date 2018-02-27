@@ -220,6 +220,5 @@ def Main():
     else:
         print(cathost + ": catalog had no updates.")
     connection.close()                  #closes the connection to the database
-    print(updates)
 if __name__ == '__main__':
     Main()
