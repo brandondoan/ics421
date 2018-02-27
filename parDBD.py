@@ -31,7 +31,8 @@ def Main():
         except:
             msg = "Failure"                  #sends the response message of either a failed or successful query
             conn.send(msg.encode())
-        tuples = []
+        tuples = []                          #array that holds the rows relevant to query
+        #for statement to populate the tuples variable with the rows relevant to the query
         for row in cursor:
             tuples.append(str(row))
         for tuple in tuples:
