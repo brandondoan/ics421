@@ -31,8 +31,9 @@ def ConfigSectionMap(section):
 
 catip = ConfigSectionMap("catalog")['ip']   #stores the catalog database ip 
 cathost = ConfigSectionMap("catalog")['hostname']  #stores the catalog database hostname
-numnodes = int(ConfigSectionMap("nodecount")['numnodes'])
-nodeurl = []
+numnodes = int(ConfigSectionMap("nodecount")['numnodes'])   #stores the number of nodes in database
+nodeurl = []                                #stores the hostname for each node
+#variables used to create query statement that will be sent to each node
 insertStmt = 'INSERT INTO '
 valuesStmt = '\nVALUES\n'
 sqlStatement = []
@@ -45,8 +46,9 @@ param2 = []
 csvlist = []
 nodeid = []
 hostnames = []
-rowcount = []
+rowcount = []                               #stores the total rows sent to a node
 
+#parser for the csvfile used in argument 2
 with open(sys.argv[2]) as csvDataFile:
     csvReader = csv.reader(csvDataFile)
     table = next(csvReader)
@@ -60,14 +62,17 @@ with open(sys.argv[2]) as csvDataFile:
     for row in csvReader:
         csvlist.append(row)
 table = str(table[0])
+#pulls the method and column value from the clustercfg.ini file used in argument 1
 method = str(ConfigSectionMap(table)['method'])
 column = str(ConfigSectionMap(table)['column'])
+#if statement that assigns partmtd depending on the method listed in config file
 if (method == 'range'):
     partmtd = 1
 elif (method == 'hash'):
     partmtd = 2
 else:
     partmtd = 0
+#for statement that populates the param1 and param2 arrays with the appropriate values corresponding to partition method
 for x in range(1, numnodes + 1):
     section.append("node " + str(x))
     nodeurl.append(str(ConfigSectionMap(section[x-1])['hostname']))
@@ -77,7 +82,7 @@ for x in range(1, numnodes + 1):
     if (partmtd == 2):
         param1.append(int(ConfigSectionMap(table)['param1']))
         param2.append(0)
-
+#if statement that populates the queries that will be sent to each node, used when partition method is range
 if (partmtd == 1):
     for row in csvlist:
         for x in range(1, numnodes + 1):
@@ -90,7 +95,7 @@ if (partmtd == 1):
         queries[x][len(queries[x])-1] = queries[x][len(queries[x])-1][:-2]
         queries[x] = queries[x] + [';']
         queries[x] = ''.join(queries[x])
-
+#if statement that populates the queries that will be sent to each node, used when partition method is hash
 if (partmtd == 2):
     for row in csvlist:
         x = (int(row[0]) % param1[0])
@@ -145,6 +150,7 @@ def run_query(nodeid, hostname, ip, query, queue):
             print (data)
         mySocket.close()
 
+#function to update catalog database with new values        
 def db_runquery(hostname, ip, query, update):
         port = 50001                        #port used for connection to server
         for x in query:
@@ -169,10 +175,11 @@ the function takes two command line arguments, the first is the config file that
 def Main():
 #try statement for creating the catalog database table if it does not exist, otherwise saves a boolean value that the catalog was already created
     success = []                        #array that will be used to hold the queue values for successful queries
-    updates = []                         #boolean value that is used to show if catalog was updated
-    updated = 0
+    updates = []                        #boolean value that is used to show if catalog was updated, used in for loop to adjust updated variable
+    updated = 0                         #integer to check if catalog was updated, used for print statement
     count = 0                           #integer to hold the amount of times we iterate through the for loop that updates the catalog database
-    db_query = []
+    db_query = []                       #array to hold the catalog update queries for each node that was changed
+    #for loop to populate db_query with queries
     for x in range(1, int(numnodes) + 1):
         format_list = []
         format_list.append(table)
@@ -204,7 +211,7 @@ def Main():
         if x == 1:
             print (hostnames[count] + ": " + str(rowcount[count]) + " rows inserted.")
         count += 1 
-#for loop checks to see if any of the queries succeeded and contained a drop or create statement, if true, prints out a catalog updated statement, and if false, prints out catalog had no updates
+#for loop checks to see if any of the queries succeeded, if true, prints out a catalog updated statement, and if false, prints out catalog had no updates
     for x in updates:
         if x == 1:
             updated = 1
